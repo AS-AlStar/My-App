@@ -9,7 +9,7 @@ module TtnParser
     end
 
     def name
-      @name ||= doc.at_xpath('//h1').text.strip
+      @name ||= value_by_xpath('//h1') { |node| node.text.strip }
     end
 
     def to_h
@@ -17,7 +17,7 @@ module TtnParser
     end
 
     def subcategories
-      @subcategories ||= doc.xpath('//div[@class="product-loop-categories"]//a/@href').map do |node|
+      @subcategories ||= values_by_xpath('//div[@class="product-loop-categories"]//a/@href') do |node|
         self.class.new(url: SITE_DOMAIN + node.text)
       end
     end
@@ -27,7 +27,7 @@ module TtnParser
     end
 
     def last_page_number
-      @last_page_number ||= doc.xpath('//a[@class="page-numbers"]/@href').last.text[/page=(\d+)/, 1].to_i rescue 0
+      @last_page_number ||= values_by_xpath('//a[@class="page-numbers"]/@href').last.text[/page=(\d+)/, 1].to_i rescue 0
     end
 
     def product_urls
