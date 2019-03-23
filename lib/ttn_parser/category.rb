@@ -9,7 +9,11 @@ module TtnParser
     end
 
     def name
-      @name ||= doc.at_xpath('//h1').text
+      @name ||= doc.at_xpath('//h1').text.strip
+    end
+
+    def to_h
+      { name: name, url: url }
     end
 
     def subcategories
@@ -23,7 +27,7 @@ module TtnParser
     end
 
     def last_page_number
-      @last_page_number ||= doc.xpath('//a[@class="page-numbers"]/@href').last.text[/page=(\d+)/, 1].to_i
+      @last_page_number ||= doc.xpath('//a[@class="page-numbers"]/@href').last.text[/page=(\d+)/, 1].to_i rescue 0
     end
 
     def product_urls
@@ -31,7 +35,7 @@ module TtnParser
         page_url = url + "?page=#{page_number}"
         page_doc = Nokogiri::HTML(open(page_url))
         nodes = page_doc.xpath('//div[@class="products"]//div[contains(@class, "product")]//a/@href')
-        nodes.map(&:text).uniq.map { |product_url| SITE_DOMAIN + product_url }
+        nodes.map(&:text).uniq.reject(&:empty?).map { |product_url| SITE_DOMAIN + product_url }
       end
     end
   end
