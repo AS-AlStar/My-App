@@ -4,7 +4,10 @@ module TtnParser
     include Parsable
 
     def call
-      main_categories.map { |category| process_category(site_category: category) }.each(&:join)
+      threads = main_categories.map do |category|
+        Thread.new { process_category(site_category: category) }
+      end
+      threads.each(&:join)
     end
 
     private
@@ -26,15 +29,13 @@ module TtnParser
     end
 
     def process_category(site_category:, parent_id: nil)
-      Thread.new do
-        category = ::Category.find_or_create_by(site_category.to_h.merge(parent_id: parent_id).compact)
-        site_category.products.each do |site_product|
-          product = ::Product.find_or_create_by(site_product.to_h)
-          CategoryProduct.find_or_create_by(product_id: product.id, category_id: category.id)
-        end
-        site_category.subcategories.each do |subcategory|
-          process_category(site_category: subcategory, parent_id: category.id)
-        end
+      category = ::Category.find_or_create_by(site_category.to_h.merge(parent_id: parent_id).compact)
+      site_category.products.each do |site_product|
+        product = ::Product.find_or_create_by(site_product.to_h)
+        CategoryProduct.find_or_create_by(product_id: product.id, category_id: category.id)
+      end
+      site_category.subcategories.each do |subcategory|
+        process_category(site_category: subcategory, parent_id: category.id)
       end
     end
   end
