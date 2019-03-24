@@ -30,4 +30,8 @@ class CategoriesController < ApplicationController
    end
   end
 
+  def index
+    @categories = Category.top_level
+  end
+
 end
