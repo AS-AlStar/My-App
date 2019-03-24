@@ -19,7 +19,7 @@ module TtnParser
     end
 
     def price
-      @price ||= value_by_xpath('//p[@class="price"]/span') { |node| node.text.strip.to_f }
+      @price ||= value_by_xpath('//p[@class="price"]/span') { |node| node.text.strip.delete(' ').to_f }
     end
 
     def description
