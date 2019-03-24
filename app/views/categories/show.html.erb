@@ -1,22 +1,80 @@
 <div class="container">
-  <nav aria-label="breadcrumb">
+
+   <nav aria-label="breadcrumb">
     <ol class="breadcrumb">
-      <li class="breadcrumb-item"><a href="<%= categories_path %>">Home</a></li>
+        <li class="breadcrumb-item"><a href="<%= categories_path %>">Home</a></li>
       <% @category.ancestors.each do |ancestor| %>
         <li class="breadcrumb-item"><a href="<%= category_path(ancestor) %>"><%= ancestor.name %></a></li>
       <% end %>
       <li class="breadcrumb-item active" aria-current="page"><%= @category.name %></li>
     </ol>
   </nav>
+  <% if @category.products? %>
+  <div class="dropdown">
+    <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+      Кнопка выпадающего списка
+    </button>
+    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+      <a class="dropdown-item" href="<%= category_path(@category) + "?order=expensive" %>">Expensive</a>
+      <a class="dropdown-item" href="<%=category_path(@category) + "?order=cheap"%>">Cheap</a>
+    </div>
+  </div>
+  <% end %>
   <div class="row">
     <div class="col-md-2"></div>
-    <div class="col-md-8">
+    <div class="col-md-10">
       <% if @category.products? %>
-
+        <div class="row">
+          <% @products.each_with_index do |product, index| %>
+<!--            <div class="col-md-4">-->
+              <div class="card-group">
+                <div class="card" style="width: 18rem;">
+                  <img src="<%= product.image %>" class="card-img-top" alt="..." height="300">
+                  <div class="card-body">
+                    <h5 class="card-title"><%= product.title %></h5>
+                    <h3 class="card-title"><%= product.price %></h3>
+                    <ul>
+                      <% product.description.split(';').each do |bullet| %>
+                        <li class="card-text"><%= bullet %></li>
+                      <% end %>
+                    </ul>
+                    <a href="<%= product.url %>" class="btn btn-primary">Go to site</a>
+                   </div>
+                </div>
+              </div>
+<!--            </div>-->
+            <% if (index.next % 3).zero? %>
+              <div class="col-md-12">
+                <hr>
+              </div>
+            <% end %>
+          <% end %>
+        </div>
       <% else %>
-
+        <ul class="list-group">
+          <% @category.subcategories.each do |subcategory| %>
+            <li class="list-group-item">
+              <%= link_to subcategory.name, category_path(subcategory) %>
+            </li>
+          <% end %>
+        </ul>
       <% end %>
     </div>
-    <div class="col-md-2"></div>
+<!--    <div class="col-md-2"></div>-->
   </div>
 </div>
+<% if @pages_count > 1 %>
+<nav aria-label="Page navigation example">
+  <ul class="pagination align-center">
+    <li class="page-item"><a class="page-link" href="<%= category_path(@category) + "?page=1" + (@order_type ? "&order=#{@order_type}" : "") %>">First page</a></li>
+    <li class="page-item"><a class="page-link" href="<%= category_path(@category) + "?page=#{@current_page - 1}" + (@order_type ? "&order=#{@order_type}" : "") %>">Previous page</a></li>
+      <% (@current_page...( @current_page + 10 > @pages_count ? @pages_count : @current_page + 10 )).each do |page_number|  %>
+        <li class="page-item">
+          <a class="page-link" href="<%= category_path(@category) + "?page=#{page_number}" + (@order_type ? "&order=#{@order_type}" : "") %>"><%= page_number %></a>
+        </li>
+      <% end %>
+    <li class="page-item"><a class="page-link" href="<%= category_path(@category) + "?page=#{@current_page + 1}" + (@order_type ? "&order=#{@order_type}" : "") %>">Next</a></li>
+    <li class="page-item"><a class="page-link" href="<%= category_path(@category) + "?page=#{@pages_count - 1}" + (@order_type ? "&order=#{@order_type}" : "") %>">Last page</a></li>
+  </ul>
+</nav>
+<% end %>

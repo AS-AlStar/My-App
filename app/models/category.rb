@@ -5,6 +5,10 @@ class Category < ApplicationRecord
 
   belongs_to :parent, class_name: 'Category', optional: true
 
+  PRODUCTS_PER_PAGE = 40
+
+
+
   def ancestors
     ancestors = []
     current_parent = parent
