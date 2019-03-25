@@ -1,0 +1,9 @@
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="<%= categories_path %>">Категории</a></li>
+    <% @category.ancestors.each do |ancestor| %>
+      <li class="breadcrumb-item"><a href="<%= category_path(ancestor) %>"><%= ancestor.name %></a></li>
+    <% end %>
+    <li class="breadcrumb-item active" aria-current="page"><%= @category.name %></li>
+  </ol>
+</nav>
