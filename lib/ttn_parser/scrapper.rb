@@ -10,6 +10,21 @@ module TtnParser
       end
     end
 
+    def update_image(id)
+      product = ::Product.find(id)
+      product_url = product.url
+      doc_url = Nokogiri::HTML(open(product_url))
+      product_image_new_url = doc_url.at_xpath('//div[@class="product"]//figure/div[@data-thumb]//img/@src').text
+      product.image = SITE_DOMAIN + product_image_new_url
+      product.save!
+    end
+
+    def all_update_image
+      ::Product.all.each do |product|
+        update_image(product.id)
+      end
+    end
+
     def save_top_level_categories
       main_categories.each { |category| ::Category.find_or_create_by(category.to_h) }
     end
