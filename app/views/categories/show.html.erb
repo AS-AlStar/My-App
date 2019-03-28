@@ -20,17 +20,17 @@
           <% @products.each_with_index do |product, index| %>
             <div class="col-md-4">
               <div class="card-group">
-                <div class="card" style="width: 18rem">
-                  <img src="<%= product.image %>" class="card-img-top" alt="..." height="300">
+                <div class="card">
+                  <img src="<%= product.image %>" class="img mx-auto " alt="..." height="300px" width="160px">
                   <div class="card-body">
-                    <h5 class="text-center"><%= product.title %></h5>
+                    <h5 class="text-center" style="height: 7rem"><%= product.title %></h5>
                     <h3 class="text-center"><%= product.price %></h3>
                     <ul>
-                      <% product.description.split(';').each do |bullet| %>
+                      <% product.description.split(';').values_at(0,1,5,6).each do |bullet| %>
                         <li class="card-text"><%= bullet %></li>
                       <% end %>
                     </ul>
-                    <a href="<%= product.url %>" class="btn btn-primary">Go to site</a>
+                    <a href="<%= product.url %>" class="btn btn-primary mx-auto">Go to site</a>
                    </div>
                 </div>
               </div>
