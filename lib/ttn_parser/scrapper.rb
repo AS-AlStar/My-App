@@ -44,6 +44,15 @@ module TtnParser
       end
     end
 
+    def load_products(category)
+      site_category = TtnParser::Category.new(url: category.url)
+      while site_category.products.any?
+        site_product = site_category.products.shift
+        product = ::Product.find_or_create_by(site_product.to_h)
+        CategoryProduct.find_or_create_by(product_id: product.id, category_id: category.id)
+      end
+    end
+
     private
 
     def main_category_urls
