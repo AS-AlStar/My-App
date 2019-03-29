@@ -7,7 +7,7 @@ class Category < ApplicationRecord
 
   PRODUCTS_PER_PAGE = 40
 
-  scope :top_level, -> { where(parent_id: nil)}
+  scope :top_level, -> { where(parent_id: nil) }
 
   def ancestors
     ancestors = []

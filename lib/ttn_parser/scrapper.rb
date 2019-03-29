@@ -29,6 +29,21 @@ module TtnParser
       main_categories.each { |category| ::Category.find_or_create_by(category.to_h) }
     end
 
+    def parse_categories_tree
+      while main_categories.any?
+        category = main_categories.shift
+        load_subcategories(site_category: category)
+      end
+    end
+
+    def load_subcategories(site_category:, parent_id: nil)
+      category = ::Category.find_or_create_by(site_category.to_h.merge(parent_id: parent_id).compact)
+      while site_category.subcategories.any?
+        subcategory = site_category.subcategories.shift
+        load_subcategories(site_category: subcategory, parent_id: category.id)
+      end
+    end
+
     private
 
     def main_category_urls
@@ -38,7 +53,7 @@ module TtnParser
     end
 
     def main_categories
-      @main_categories = main_category_urls.map do |category_url|
+      @main_categories ||= main_category_urls.map do |category_url|
         Category.new(url: category_url)
       end
     end
