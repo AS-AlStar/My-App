@@ -53,6 +53,15 @@ module TtnParser
       end
     end
 
+    def parse_all_products(reverse: false)
+      categories = ::Category.all.select { |c| c.subcategories.empty? }
+      categories = categories.reverse if reverse
+      while categories.any?
+        category = categories.shift
+        load_products(category)
+      end
+    end
+
     private
 
     def main_category_urls
