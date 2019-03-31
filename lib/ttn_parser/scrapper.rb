@@ -15,7 +15,7 @@ module TtnParser
       product_url = product.url
       doc_url = Nokogiri::HTML(open(product_url))
       product_image_new_url = doc_url.at_xpath('//div[@class="product"]//figure/div[@data-thumb]//img/@src')
-      if product_image_new_url != nil
+      if product_image_new_url
         product.image = SITE_DOMAIN + product_image_new_url.text
         product.save!
       else
